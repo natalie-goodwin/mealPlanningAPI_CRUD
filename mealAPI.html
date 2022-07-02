@@ -1,0 +1,33 @@
+<!--I am using data from the Plan-A-Meal Menu App I completed in Week 5. I want to create a final project that allows users to 
+    store recipes and plan out their weekly meals
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Meal-Planning API - CRUD</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel= "stylesheet">
+    </head>
+    <body class="container">
+        <div id="new-day" class="jumbotron">
+            <h2>Plan-A-Meal</h2>
+            <input type="text" id="new-day-name" class="form-control" placeholder="Enter Day of the Week"> <br>
+            <button id="create-new-day" class="btn btn-success form-control" >Add New Day</button>
+        </div> <!--closing new-day div-->
+        
+        <!--below is the div where all the days of the weeks and the meals will be built in AJAX API; add all new elements to DOM-->
+        
+        <br>
+        
+        <div id="app">
+
+        </div> <!--closing app div-->
+
+        <!--Scripts-->
+        <script src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="mealAPI.js"></script>
+        <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </body>
+</html>
+
