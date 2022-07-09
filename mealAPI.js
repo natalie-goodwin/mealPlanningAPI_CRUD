@@ -14,23 +14,23 @@ class Day {
     }
 
 
-    addMeal(name, food) {
-    this.meals.push(new Meal(name, food)); //pushes meals to above array
+    addMeal(time, item) {
+    this.meals.push(new Meal(time, item)); //pushes meals to above array
     }
 }
 
 
 //Class 2
 class Meal {
-    constructor(name, food) {// mealtime is breakfast, lunch, dinner, etc.; food is what the user will consume at that meal
-    this.name = name;
-    this.food = food;
+    constructor(time, item) {// time is breakfast, lunch, dinner, etc.; item is what the user will consume at that meal
+    this.time = time;
+    this.item = item;
     }   
 }
 
 //Class 3
 class DayPlanningService {
-    static url = 'https://62c60707134fa108c261b8a1.mockapi.io/day'; 
+    static url = "https://62c90f400f32635590df8ece.mockapi.io/days"; 
     //root url for all the endpoints that call the API
 
     //methods for DayPlanningService Class
@@ -43,7 +43,7 @@ class DayPlanningService {
     }
 
     static createDay(day) {//creates an instance of a day and an array
-        return $.post(this.url, day) //returns make it possible to reuse the methods and handle the promise coming back
+        return $.post(this.url, day); //returns make it possible to reuse the methods and handle the promise coming back
     }
 
     static updateDay(day) { //updates a specific day
@@ -70,7 +70,7 @@ class DOMManager { //re-reander the DOM each time a user adds aor deletes the da
     static days; //represents all days in the DOMManager  
 
     static getAllDays() {
-        DayPlanningService.getAllDays().then(days =>this.render(days)); /*get all days from the DayPlanningService and render to 
+        DayPlanningService.getAllDays().then(days => this.render(days)); /*get all days from the DayPlanningService and render to 
         the DOM*/
     }
 
@@ -96,7 +96,7 @@ class DOMManager { //re-reander the DOM each time a user adds aor deletes the da
     function below*/
         for (let day of this.days) {
             if (day._id == id) {
-                day.meals.push(new Meal($(`#${day._id}-meal-name`).val(), $(`#${day._id}-meal-food`).val()));
+                day.meals.push(new Meal($(`#${day._id}-meal-time`).val(), $(`#${day._id}-meal-item`).val()));
                 DayPlanningService.updateDay(day)
                 .then(() => {
                     return DayPlanningService.getAllDays();
@@ -132,20 +132,20 @@ class DOMManager { //re-reander the DOM each time a user adds aor deletes the da
         for(let day of days) { /*appending allows each new days to attach to end end of the previous in chronological order; here, I
         add html that will appear in the currently empty div where I am rendering the DOM */      
            $('#app').prepend(
-            `<div id="${day._id}" class="card>
+            `<div id="${day._id}" class="card">
                 <div class="card-header">
                     <h2>${day.name}</h2>
-8                    <button class="btn btn-danger" onclick="DOMManager.deleteDay('${day._id}')">Delete</button>
+                    <button class="btn btn-danger" onclick="DOMManager.deleteDay('${day._id}')">Delete</button>
                 </div>               
 
                 <div class="card-body">
                     <div class="card">
                       <div class="row">
                         <div class="col-sm">
-                            <input type="text" id="${day._id}-meal-name" class="form-control" placeholder= "breakfast, lunch, dinner, etc.">
+                            <input type="text" id="${day._id}-meal-time" class="form-control" placeholder= "breakfast, lunch, dinner, etc.">
                         </div>
                         <div class="col-sm">
-                            <input type="text" id="${day._id}-meal-food" class="form-control" placeholder="list all foods for meal"> 
+                            <input type="text" id="${day._id}-meal-item" class="form-control" placeholder="list all foods for meal"> 
                         </div>
                     </div>
                         <button id="${day._id}-new-meal" onclick="DOMManager.addMeal('${day._id}')" class="btn btn-success form-control">Add Meal</button>
@@ -156,8 +156,8 @@ class DOMManager { //re-reander the DOM each time a user adds aor deletes the da
            for (let meal of day.meals) {//here I am rendering each meal 
                 $(`#${day._id}`).find('.card-body').append(
                     `<p>
-                    <span id="name-${meal._id}"><strong>Meal Time:</strong> ${meal.name}</span>
-                    <span id="food-${meal._id}"><strong>Food:</strong> ${meal.food}</span>
+                    <span id="time-${meal._id}"><strong>Meal Time: </strong> ${meal.time}</span>
+                    <span id="item-${meal._id}"><strong>Food: </strong> ${meal.item}</span>
                     <button class="btn btn-danger" onclick="DOMManager.deleteMeal('${day._id}', '${meal._id}')">Delete Meal</button>`
                 );
             } //closing tag for second for loop (meal of day.meals)
