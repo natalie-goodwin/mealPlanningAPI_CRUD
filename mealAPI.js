@@ -48,7 +48,7 @@ class DayPlanningService {
 
     static updateDay(day) { //updates a specific day
         return $.ajax({
-            url: this.url + `/${day._id}`, //when updating a day, grab the id relative to that particular day
+            url: this.url + `/${day.id}`, //when updating a day, grab the id relative to that particular day
             dataType:'json', 
             data: JSON.stringify(day), //setting the payload, taking an object and converting to JSON string before sending to HTTP request
             contentType: 'application/json',
@@ -62,6 +62,7 @@ class DayPlanningService {
             type: 'DELETE' //DELETE verb used to delete
         });
     }
+    
 }
 
 //Class 4
@@ -95,8 +96,8 @@ class DOMManager { //re-reander the DOM each time a user adds aor deletes the da
     static addMeal(id) { /*this function makes it possible to add mealtimes and foods with the add button created  in the render(days)
     function below*/
         for (let day of this.days) {
-            if (day._id == id) {
-                day.meals.push(new Meal($(`#${day._id}-meal-time`).val(), $(`#${day._id}-meal-item`).val()));
+            if (day.id == id) {
+                day.meals.push(new Meal($(`#${day.id}-meal-time`).val(), $(`#${day.id}-meal-item`).val()));
                 DayPlanningService.updateDay(day)
                 .then(() => {
                     return DayPlanningService.getAllDays();
@@ -106,59 +107,45 @@ class DOMManager { //re-reander the DOM each time a user adds aor deletes the da
         }
     }
 
-   static deleteMeal(dayId, mealId) { /*this functions makes it possible to delete rooms with the delete button cereated in the 
-    render(days) function below */
-    for (let day of this.days) {
-        if (day._id == dayId) {
-            for (let meal of day.meals) {
-                if (meal._id == mealId) {
-                    day.meals.splice(day.meals.indexOf(meal), 1);
-                    DayPlanningService.updateDay(day)
-                    .then(() => {
-                        return DayPlanningService.getAllDays();
-                    })
-                    .then((days) => this.render(days));
-                }
-            }
-        }
-    }
-}
-
     static render(days) {
         this.days = days;
         $('#app').empty() /* the '#app' refers to the empty div id created on the HTML page where we build the other meal planning functions
         'empty' means it clears each time the DOM is re-rendered */
 
-        for(let day of days) { /*appending allows each new days to attach to end end of the previous in chronological order; here, I
-        add html that will appear in the currently empty div where I am rendering the DOM */      
-           $('#app').prepend(
-            `<div id="${day._id}" class="card">
+        for(let day of days) { /*appending allows each new days to attach to end of the previous in chronological order; here, I
+        add html that will appear in the currently empty div where I am rendering the DOM; the green text is the HTML and inside
+        are the bootstrap cards and buttons */      
+           $('#app').append(
+            `<div id="${day.id}" class="card border border-success mb-3">
                 <div class="card-header">
-                    <h2>${day.name}</h2>
-                    <button class="btn btn-danger" onclick="DOMManager.deleteDay('${day._id}')">Delete</button>
+                    <h1>${day.name}</h1>
+                    <button class="btn btn-danger" onclick="DOMManager.deleteDay('${day.id}')">Delete Meal</button>
+                    <h5> Note: clicking delete will delete day and all food for the day</h5>
                 </div>               
 
                 <div class="card-body">
+                   <div class="card border border-success mb-3">
                     <div class="card">
                       <div class="row">
-                        <div class="col-sm">
-                            <input type="text" id="${day._id}-meal-time" class="form-control" placeholder= "breakfast, lunch, dinner, etc.">
+                        <div class="col-sm-6">
+                            <input type="text" id="${day.id}-meal-time" class="form-control" placeholder="Is this breakfast, lunch, dinner, etc.?">
                         </div>
-                        <div class="col-sm">
-                            <input type="text" id="${day._id}-meal-item" class="form-control" placeholder="list all foods for meal"> 
+                        <div class="col-sm-6">
+                            <input type="text" id="${day.id}-meal-item" class="form-control" placeholder="List all foods for your meal."> 
                         </div>
                     </div>
-                        <button id="${day._id}-new-meal" onclick="DOMManager.addMeal('${day._id}')" class="btn btn-success form-control">Add Meal</button>
+                        <button id="${day.id}-new-meal" onclick="DOMManager.addMeal('${day.id}')" class="btn btn-success form-control">Add Meal</button>
+                        </div>
                      </div> 
                 </div>
             </div> <br>`
            );   
            for (let meal of day.meals) {//here I am rendering each meal 
-                $(`#${day._id}`).find('.card-body').append(
+                $(`#${day.id}`).find('.card-body').append(
                     `<p>
-                    <span id="time-${meal._id}"><strong>Meal Time: </strong> ${meal.time}</span>
-                    <span id="item-${meal._id}"><strong>Food: </strong> ${meal.item}</span>
-                    <button class="btn btn-danger" onclick="DOMManager.deleteMeal('${day._id}', '${meal._id}')">Delete Meal</button>`
+                    <span id="time-${meal.id}"><strong>Meal Time:&nbsp; &nbsp;  </strong>${meal.time}</span> <br>
+                    <span id="item-${meal.id}"><strong>Food:&nbsp; &nbsp; </strong> ${meal.item}</span>
+                    `                
                 );
             } //closing tag for second for loop (meal of day.meals)
         } //closing tag for first for loop (day of days)
